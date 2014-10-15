@@ -101,6 +101,7 @@ if (isset($_POST['job'])) {
 				'link'	=> $link,
 				'menu_title'	=> $page_info['menu_title'],
 				'page_title'	=> $page_info['page_title'],
+				'section_id'	=> $result['section_id'],
 				'content'		=> $cont
 			);
 		}
