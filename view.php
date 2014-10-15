@@ -69,7 +69,7 @@ if (isset($_POST['job'])) {
 		
 		if (strlen($search_item) == 0) return NULL;
 		
-		$q = "SELECT `section_id`,`page_id`,`content`,`text` FROM `".TABLE_PREFIX."mod_wysiwyg` where `content` LIKE '%".$search_item."%'";
+		$q = "SELECT `section_id`,`page_id`,`content`,`text` FROM `".TABLE_PREFIX."mod_wysiwyg` where `text` LIKE '%".$search_item."%'";
 		$all_finds = array();
 		$database->execute_query(
 			$q,
@@ -91,11 +91,11 @@ if (isset($_POST['job'])) {
 			);
 			
 			$replace = sprintf( $MOD_JASM['search_item_hilite'], $search_item );
-			$cont = str_replace( $search_item, $replace, $result['text'] );
+			// $cont = str_replace( $search_item, $replace, $result['text'] );
+			
+			$cont = preg_replace("/".$search_item."/i", $replace, $result['text']);
 			
 			$link = LEPTON_URL.PAGES_DIRECTORY.$page_info['link'].".php";
-			
-			#echo "<p><a href='".$link."'>".$page_info['menu_title']."</a></p><p>".$cont."</p>";
 			
 			$all_results[] = array(
 				'link'	=> $link,

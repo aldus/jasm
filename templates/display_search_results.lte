@@ -6,7 +6,7 @@
 	<p class="search_results_head">{{ search_results_head }}</p>
 	
 	{% for result in all_results %}
-		<p>Page: <a href='{{ result.link }}'>{{ result.menu_title }}</a></p>
+		<p>Page: <a href='{{ result.link }}'>{{ result.page_title }}</a></p>
 		{{ result.content }}
 		<hr size=1 />
 	{% endfor %}
