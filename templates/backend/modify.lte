@@ -1,0 +1,18 @@
+{% autoescape false %}
+<!-- Output by Twig -->
+<div>
+<form name="jasm_settings" class="jasm" action="{{ LEPTON_URL }}/modules/jasm/save.php" method="post">
+<input type="hidden" name="page_id" value="{{ PAGE_ID }}" />
+<input type="hidden" name="section_id" value="{{ SECTION_ID }}" />
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr>
+	<td align="left">
+		<input type="submit" value="{{ TEXT_SAVE }}" style="width: 150px; margin-top: 5px;" />
+		<input class="reset" type="button" value="{{ TEXT_CANCEL }}" onclick="javascript: window.location = 'index.php';" style="width: 150px; margin-top: 5px;" />
+	</td>
+</tr>
+</table>
+</form>
+<!-- end Twig -->
+{% endautoescape %}

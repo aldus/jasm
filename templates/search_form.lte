@@ -1,0 +1,11 @@
+{% autoescape false %}
+<!--  module: jasm - internal frontend-template -->
+<form class="jasm_form" action="{{ form_action }}" method="post">
+<input type="hidden" name="page_id" value="{{ page_id }}" />
+<input type="hidden" name="section_id" value="{{section_id}}" />
+<input type="hidden" name="job" value="display_results" />
+<input type="hidden" name="request_time" value="{{ request_time }}" />
+<input type="text" name="search_string" value="" class="jasm_input" />
+<input type="submit" name="submit" value="{{ submit }}" class="jasm_submit" />
+</form>
+{% endautoescape %}

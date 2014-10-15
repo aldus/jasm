@@ -1,0 +1,4 @@
+/**
+ *	jasm::frontend.js
+ *
+ */

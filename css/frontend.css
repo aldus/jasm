@@ -1,0 +1,54 @@
+/**
+ *	jasm::frontend.css
+ *
+ */
+ 
+.jasm_form {
+	display: block;
+	float: left;
+	width: 100%;
+	height: 50px;
+	margin-top: 20px;
+	margin-bottom: 26px;
+}
+
+.jasm_input {
+	width: 230px;
+	height: 18px;
+	margin-right: 18px;
+}
+
+.jasm_submit {
+	width: 100px;
+	color: #990000;
+}
+
+
+/**
+ *	Search results
+ */
+
+p.search_results_head {
+	display:block;
+	width: 100%;
+	height: 100px;
+	font-size: 12px;
+	line-height: 1.4em;
+	text-align: center;
+}
+
+p.search_results_head span.search_item {
+	font-weight: bold;
+	text-decoration: none;
+	color: #000000;
+	padding: 0;
+}
+
+span.search_item {
+	font-weight: bold;
+	color: #009900;
+	padding-left: 2px;
+	padding-right: 2px;
+	text-decoration:underline;
+}
+
