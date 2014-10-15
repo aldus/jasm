@@ -38,7 +38,7 @@ $values = array(
 	$section_id
 );
 
-$oStatement = $database->prepare_and_execute(
+$database->prepare_and_execute(
 	"DELETE FROM `".TABLE_PREFIX."mod_jasm` WHERE `section_id`= ?",
 	$values
 );
