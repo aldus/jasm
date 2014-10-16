@@ -90,6 +90,9 @@ if (isset($_POST['job'])) {
 			$all_pages
 		);
 		
+		$pages_found = 0;
+		$absolute_hits = 0;
+		
 		foreach($all_pages as &$page) {
 		
 			$page_link = LEPTON_URL.PAGES_DIRECTORY.$page['link'].".php";
@@ -104,6 +107,7 @@ if (isset($_POST['job'])) {
 				$all_sections
 			);
 			
+			$num_of_hits = 0;
 			/**
 			 *	Look over the sections 
 			 */
@@ -130,7 +134,7 @@ if (isset($_POST['job'])) {
 							 */
 							foreach($section_content as &$result) {
 							
-								$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $result['text']);
+								$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $result['content']);
 							
 								$all_results[] = array(
 									'link'	=> $page_link,
@@ -141,6 +145,7 @@ if (isset($_POST['job'])) {
 								);
 							}
 						}
+						$num_of_hits++;
 						break;
 					
 					/**
@@ -155,9 +160,18 @@ if (isset($_POST['job'])) {
 						);
 						
 						if (count($section_content) == 0) continue;
-						
+							
 						foreach($section_content as &$result) {
-							$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $result['content_short']);
+						
+							/**
+							 *	Content_short or content_long?
+							 */
+							$text_ref = ( false !== stripos( $result['content_short'], $search_item ) )
+								? $result['content_short']
+								: $result['content_long']
+								;
+							
+							$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $text_ref);
 							
 							$all_results[] = array(
 								'link'	=> $page_link,
@@ -167,6 +181,7 @@ if (isset($_POST['job'])) {
 								'content'		=> $cont
 							);
 						}
+						$num_of_hits++;
 						break;
 						
 					default:
@@ -174,10 +189,17 @@ if (isset($_POST['job'])) {
 						
 				} // end switch
 			} // end forall sections
+			
+			if ($num_of_hits > 0) {
+				$pages_found++;
+				$absolute_hits += $num_of_hits;
+			}
+			
 		} // end forall pages
 		
 		$display_results = array(
-			"no_results" => count($all_pages) == 0 ? 1 : 0,
+			"num_of_results" => $absolute_hits,
+			"search_results_info"	=> sprintf($MOD_JASM['search_results_info'], $absolute_hits, $pages_found),
 			"no_results_msg" => sprintf($MOD_JASM['no_results_msg'], $search_item) ,
 			"search_results_head" => sprintf($MOD_JASM['search_results_head'], $search_item),
 			'all_results' => $all_results

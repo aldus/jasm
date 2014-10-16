@@ -1,10 +1,9 @@
 {% autoescape false %}
 <!--  module: jasm - internal frontend-template -->
-{% if no_results == 1 %}
+{% if num_of_results == 0 %}
 	<p>{{ no_results_msg }}</p>
 {% else %}
-	<p class="search_results_head">{{ search_results_head }}</p>
-	
+	<p class="search_results_head">{{ search_results_head }} <br />{{ search_results_info }}</p>
 	{% for result in all_results %}
 		<p>P: <a href='{{ result.link }}'>{{ result.page_title }}</a> - <em>{{ result.section_id }}</em></p>
 		{{ result.content }}
