@@ -160,59 +160,6 @@ if (isset($_POST['job'])) {
 			$display_results
 		);
 
-		/*
-		$q = "SELECT `section_id`,`page_id`,`content`,`text` FROM `".TABLE_PREFIX."mod_wysiwyg` where `text` LIKE '%".$search_item."%'";
-		$all_finds = array();
-		$database->execute_query(
-			$q,
-			true,
-			$all_finds,
-			true
-		);
-		
-		$all_results = array();
-			
-		foreach($all_finds as &$result) {
-			
-			$page_info = array();
-			$database->execute_query(
-				"SELECT `page_title`,`link`,`menu_title` FROM `".TABLE_PREFIX."pages` WHERE `page_id`='".$result['page_id']."'",
-				true,
-				$page_info,
-				false
-			);
-			
-			$replace = sprintf( $MOD_JASM['search_item_hilite'], $search_item );
-			// $cont = str_replace( $search_item, $replace, $result['text'] );
-			
-			$cont = preg_replace("/".$search_item."/i", $replace, $result['text']);
-			
-			$link = LEPTON_URL.PAGES_DIRECTORY.$page_info['link'].".php";
-			
-			$all_results[] = array(
-				'link'	=> $link,
-				'menu_title'	=> $page_info['menu_title'],
-				'page_title'	=> $page_info['page_title'],
-				'section_id'	=> $result['section_id'],
-				'content'		=> $cont
-			);
-		}
-		
-		$display_results = array(
-			"no_results" => count($all_finds) == 0 ? 1 : 0,
-			"no_results_msg" => sprintf($MOD_JASM['no_results_msg'], $search_item) ,
-			"search_results_head" => sprintf($MOD_JASM['search_results_head'], $search_item),
-			'all_results' => $all_results
-		);
-		
-		$twig_util->resolve_path("display_search_results.lte");
-
-		echo $parser->render(
-			"@jasm/display_search_results.lte",
-			$display_results
-		);
-		
-		*/
 	}
 }
 ?>
