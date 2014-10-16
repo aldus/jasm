@@ -104,10 +104,12 @@ if (isset($_POST['job'])) {
 			$database->execute_query(
 				"SELECT `section_id`,`module` FROM `".TABLE_PREFIX."sections` WHERE `page_id`='".$page['page_id']."'",
 				true,
-				$all_sections
+				$all_sections,
+				true
 			);
 			
 			$num_of_hits = 0;
+			
 			/**
 			 *	Look over the sections 
 			 */
@@ -134,8 +136,10 @@ if (isset($_POST['job'])) {
 							 */
 							foreach($section_content as &$result) {
 							
+								$num_of_hits += substr_count($result['content'], $search_item);
+								
 								$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $result['content']);
-							
+								
 								$all_results[] = array(
 									'link'	=> $page_link,
 									'menu_title'	=> $page['menu_title'],
@@ -145,7 +149,7 @@ if (isset($_POST['job'])) {
 								);
 							}
 						}
-						$num_of_hits++;
+						
 						break;
 					
 					/**
@@ -171,8 +175,10 @@ if (isset($_POST['job'])) {
 								: $result['content_long']
 								;
 							
-							$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $text_ref);
+							$num_of_hits += substr_count($text_ref, $search_item);
 							
+							$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $text_ref);
+
 							$all_results[] = array(
 								'link'	=> $page_link,
 								'menu_title'	=> $page['menu_title'],
@@ -181,7 +187,7 @@ if (isset($_POST['job'])) {
 								'content'		=> $cont
 							);
 						}
-						$num_of_hits++;
+						#$num_of_hits++;
 						break;
 						
 					default:
