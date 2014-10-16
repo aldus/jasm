@@ -110,6 +110,10 @@ if (isset($_POST['job'])) {
 			foreach($all_sections as &$current_section) {
 
 				switch( $current_section['module'] ) {
+					
+					/**
+					 *	WYSIWYG section
+					 */
 					case 'wysiwyg':
 						$section_content = array();
 						$database->execute_query(
@@ -139,6 +143,32 @@ if (isset($_POST['job'])) {
 						}
 						break;
 					
+					/**
+					 *	News section
+					 */
+					case 'news':
+						$section_content = array();
+						$database->execute_query(
+							"SELECT `title`,`content_short`,`content_long`,`post_id` FROM `".TABLE_PREFIX."mod_news_posts` WHERE `section_id`='".$current_section['section_id']."' AND `content_short` LIKE '%".$search_item."%' OR `content_long` LIKE '%".$search_item."%'",
+							true,
+							$section_content
+						);
+						
+						if (count($section_content) == 0) continue;
+						
+						foreach($section_content as &$result) {
+							$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $result['content_short']);
+							
+							$all_results[] = array(
+								'link'	=> $page_link,
+								'menu_title'	=> $page['menu_title'],
+								'page_title'	=> $page['page_title'],
+								'section_id'	=> $current_section['section_id'],
+								'content'		=> $cont
+							);
+						}
+						break;
+						
 					default:
 						// nothing
 						
