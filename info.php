@@ -24,9 +24,7 @@ $module_home            = 'http://www.lepton-cms.org';
 $module_guid            = 'EFB8577F-3DB7-46D0-914D-2A4F6A928ADD';
 
 /**
- *	0.2.0	2014-10-16	- New search strategy.
- *
- *	0.1.0 	2014-10-15	- First private run.
+ *	changelog_details: https://github.com/aldus/jasm
  *
  */
 
