@@ -4,7 +4,7 @@
  *  @module         jasm
  *  @version        see info.php of this module
  *  @authors        Dietrich Roland Pehlke
- *  @copyright      2014 The LEPTON-CMS development team - Dietrich Roland Pehlke
+ *  @copyright      2017 The LEPTON-CMS development team - Dietrich Roland Pehlke
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -41,10 +41,8 @@ $fields = array(
 	'section_id' => $section_id
 );
 
-$oStatement = $database->build_and_execute(
+$database->build_and_execute(
 	"insert",
 	TABLE_PREFIX."mod_jasm",
 	$fields
 );
-
-?>

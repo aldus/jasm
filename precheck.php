@@ -4,7 +4,7 @@
  *  @module         jasm
  *  @version        see info.php of this module
  *  @authors        Dietrich Roland Pehlke
- *  @copyright      2014 The LEPTON-CMS development team - Dietrich Roland Pehlke
+ *  @copyright      2017 The LEPTON-CMS development team - Dietrich Roland Pehlke
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -31,7 +31,6 @@ if (defined('LEPTON_PATH')) {
 
 // Checking Requirements
 $PRECHECK['LEPTON_VERSION'] = array(
-	'VERSION' => '2.0.0', 'OPERATOR' => '>='
+	'VERSION' => '2.4.0', 'OPERATOR' => '>='
 );
 
-?>
