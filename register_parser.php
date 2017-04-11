@@ -34,5 +34,5 @@ require_once (LEPTON_PATH."/modules/lib_twig/classes/class.twig_utilities.php");
 $twig_util = new twig_utilities( $parser, $loader, $module_template_path, $backend_template_path );
 $twig_util->template_namespace = $module_directory;
 
-$twig_modul_namespace = "@".$module_directory."/"
+$twig_modul_namespace = "@".$module_directory."/";
 

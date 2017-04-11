@@ -37,14 +37,14 @@ p.search_results_head {
 	text-align: center;
 }
 
-p.search_results_head span.search_item {
+p.search_results_head span.jasm_search_item {
 	font-weight: bold;
 	text-decoration: none;
 	color: #000000;
 	padding: 0;
 }
 
-span.search_item {
+span.jasm_search_item {
 	font-weight: bold;
 	color: #009900;
 	padding-left: 2px;

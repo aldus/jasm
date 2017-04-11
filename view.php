@@ -14,6 +14,7 @@
 /**	*************************
  *	Load module language file
  */
+global $MOD_JASM;
 $lang = (dirname(__FILE__)) . '/languages/' . LANGUAGE . '.php';
 require_once(!file_exists($lang) ? (dirname(__FILE__)) . '/languages/EN.php' : $lang );
 
@@ -65,6 +66,7 @@ if (isset($_POST['job'])) {
 		/**
 		 *	Here we go ...
 		 */
+		global $search_item;
 		$search_item = trim( $_POST['search_string'] );
 		
 		if (strlen($search_item) == 0) return NULL;
@@ -93,6 +95,15 @@ if (isset($_POST['job'])) {
 		$pages_found = 0;
 		$absolute_hits = 0;
 		
+		require_once LEPTON_PATH."/modules/droplets/droplets.php";
+		
+		/**
+		 *	Get the section "out of time" query part
+		 */
+		$now = time();
+		$section_timetest_query = " AND ( (".$now." <= `publ_end` OR (`publ_end` = 0)) AND ( (".$now." >= `publ_start`) OR (`publ_start` = 0)))";
+		
+		
 		foreach($all_pages as &$page) {
 		
 			$page_link = LEPTON_URL.PAGES_DIRECTORY.$page['link'].".php";
@@ -100,11 +111,11 @@ if (isset($_POST['job'])) {
 			/**
 			 *	Get the sections of the page
 			 */
-			$all_sections = array();
+			$all_page_sections = array();
 			$database->execute_query(
-				"SELECT `section_id`,`module` FROM `".TABLE_PREFIX."sections` WHERE `page_id`='".$page['page_id']."'",
+				"SELECT `section_id`,`module` FROM `".TABLE_PREFIX."sections` WHERE `page_id`='".$page['page_id']."'".$section_timetest_query ,
 				true,
-				$all_sections,
+				$all_page_sections,
 				true
 			);
 			
@@ -113,7 +124,7 @@ if (isset($_POST['job'])) {
 			/**
 			 *	Look over the sections 
 			 */
-			foreach($all_sections as &$current_section) {
+			foreach($all_page_sections as &$current_section) {
 
 				switch( $current_section['module'] ) {
 					
@@ -121,30 +132,51 @@ if (isset($_POST['job'])) {
 					 *	WYSIWYG section
 					 */
 					case 'wysiwyg':
+					
 						$section_content = array();
 						$database->execute_query(
-							"SELECT `content`,`text`,`section_id` FROM `".TABLE_PREFIX."mod_wysiwyg` WHERE `section_id`='".$current_section['section_id']."' AND `text` LIKE '%".$search_item."%'",
+							"SELECT `content`,`text`,`section_id` FROM `".TABLE_PREFIX."mod_wysiwyg` WHERE `section_id`='".$current_section['section_id']."'",
 							true,
-							$section_content
+							$section_content,
+							false
 						);
-						
+
 						if (count($section_content) == 0) {
-							continue;
+							// continue;
 						} else {
-							/**
-							 *	Found something!
-							 */
-							foreach($section_content as &$result) {
 							
-								$num_of_hits += substr_count($result['content'], $search_item);
+							processDroplets( $section_content['content'] );
+							
+							/**
+							 *	Try to find something!
+							 */
+							$temp_list_result = array();
+
+							
+							if( preg_match_all('/('.$search_item.')/Ui', $section_content['content'], $temp_list_result, PREG_SET_ORDER ))
+							{
+								// found
+								$num_of_hits += count($temp_list_result); // substr_count($section_content['content'], $search_item);
 								
-								$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $result['content']);
+								$cont = preg_replace_callback(
+									'/(<img.*src=.*'.$search_item.'[^\"]*\")|('.$search_item.')/is',
+										function ($treffer){
+											global $MOD_JASM;
+											global $search_item;
+											// echo LEPTON_tools::display( $treffer, "code", "ui message");
+											return $treffer[1] == ""
+												? sprintf( $MOD_JASM['search_item_hilite'], $treffer[0])
+												: "<em>(Im Bildnamen: ".sprintf( $MOD_JASM['search_item_hilite'], $search_item ).")</em>".$treffer[0]
+												;
+										},
+									$section_content['content']
+								);
 								
 								$all_results[] = array(
 									'link'	=> $page_link,
 									'menu_title'	=> $page['menu_title'],
 									'page_title'	=> $page['page_title'],
-									'section_id'	=> $result['section_id'],
+									'section_id'	=> $section_content['section_id'],
 									'content'		=> $cont
 								);
 							}
@@ -154,11 +186,12 @@ if (isset($_POST['job'])) {
 					
 					/**
 					 *	News section
-					 */
+					 *
+					 /
 					case 'news':
 						$section_content = array();
 						$database->execute_query(
-							"SELECT `title`,`content_short`,`content_long`,`post_id` FROM `".TABLE_PREFIX."mod_news_posts` WHERE `section_id`='".$current_section['section_id']."' AND `content_short` LIKE '%".$search_item."%' OR `content_long` LIKE '%".$search_item."%'",
+							"SELECT `title`,`content_short`,`content_long`,`post_id` FROM `".TABLE_PREFIX."mod_news_posts` WHERE `section_id`='".$current_section['section_id']."'",
 							true,
 							$section_content
 						);
@@ -169,7 +202,7 @@ if (isset($_POST['job'])) {
 						
 							/**
 							 *	Content_short or content_long?
-							 */
+							 * /
 							$text_ref = ( false !== stripos( $result['content_short'], $search_item ) )
 								? $result['content_short']
 								: $result['content_long']
@@ -189,7 +222,7 @@ if (isset($_POST['job'])) {
 						}
 						#$num_of_hits++;
 						break;
-						
+						*/
 					default:
 						// nothing
 						
@@ -202,6 +235,8 @@ if (isset($_POST['job'])) {
 			}
 			
 		} // end forall pages
+		
+		// echo LEPTON_tools::display( $all_results, "pre", "ui message red");
 		
 		$display_results = array(
 			"num_of_results" => $absolute_hits,

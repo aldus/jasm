@@ -15,9 +15,9 @@ $MOD_JASM = array (
 	'submit'	=> "Search",
 	'nothing_to_setup'	=> "<p class='jasm_msg'>Nothing to setup right now!</p>",
 	'no_results_msg'	=> "No results found for \"<strong>%s</strong>\".",
-	'search_results_head'	=> "Search results for: <span class='search_item'>%s</span>",
+	'search_results_head'	=> "Search results for: <span class='jasm_search_item'>%s</span>",
 	'search_results_info'	=> "Found %s times in %s pages.",
-	'search_item_hilite' => "<span class='search_item'>%s</span>"
+	'search_item_hilite' => "<span class='jasm_search_item'>%s</span>"
 );
 
 ?>
