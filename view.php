@@ -87,7 +87,7 @@ if (isset($_POST['job'])) {
 		 */
 		$all_pages = array();
 		$database->execute_query(
-			"SELECT `page_id`,`page_title`,`menu_title`,`link` from `".TABLE_PREFIX."pages` WHERE `visibility`='public' ORDER BY `parent`,`position`",
+			"SELECT `page_id`,`page_title`,`menu_title`,`link`,`description` from `".TABLE_PREFIX."pages` WHERE `visibility`='public' ORDER BY `parent`,`position`",
 			true,
 			$all_pages
 		);
@@ -108,6 +108,27 @@ if (isset($_POST['job'])) {
 		
 			$page_link = LEPTON_URL.PAGES_DIRECTORY.$page['link'].".php";
 
+			/**
+			 *	Page description?
+			 */
+			if($page["description"] != "")
+			{
+				$temp_list_result = array();
+				if( preg_match_all('/('.$search_item.')/Ui', $page["description"], $temp_list_result, PREG_SET_ORDER ))
+				{
+					// found something inside the pagedesc
+					$all_results[] = array(
+						'link'	=> $page_link,
+						'menu_title'	=> $page['menu_title'],
+						'page_title'	=> $page['page_title'],
+						'section_id'	=> $page['page_id'],
+						'content'		=> "META (page) description: ".str_replace ($search_item, sprintf( $MOD_JASM['search_item_hilite'], $search_item),  $page["description"])
+					);
+			
+					$num_of_hits++;
+				}
+			}
+			
 			/**
 			 *	Get the sections of the page
 			 */
@@ -159,24 +180,33 @@ if (isset($_POST['job'])) {
 								$num_of_hits += count($temp_list_result); // substr_count($section_content['content'], $search_item);
 								
 								$cont = preg_replace_callback(
-									'/(<img.*src=.*'.$search_item.'[^\"]*\")|('.$search_item.')/is',
+									'/(<img.*src=.*'.$search_item.'[^>]*\/>)|('.$search_item.')/is',
 										function ($treffer){
 											global $MOD_JASM;
 											global $search_item;
 											// echo LEPTON_tools::display( $treffer, "code", "ui message");
 											return $treffer[1] == ""
 												? sprintf( $MOD_JASM['search_item_hilite'], $treffer[0])
-												: "<em>(Im Bildnamen: ".sprintf( $MOD_JASM['search_item_hilite'], $search_item ).")</em>".$treffer[0]
+												: $treffer[0].sprintf($MOD_JASM['found_inside_filename'], sprintf( $MOD_JASM['search_item_hilite'], $search_item ) )
 												;
 										},
 									$section_content['content']
 								);
 								
+								// content 2
+								$s = explode ("%s", str_replace("/", "\/", $MOD_JASM['search_item_hilite']));
+								$a = array();
+								$cont = preg_match_all("/(.{0,30}".$s[0].".*".$s[1].".{0,30})/i", $cont, $a);
+								//echo LEPTON_tools::display( $a, "div", "ui message red");
+								$s2 = "";
+								foreach($a[1] as $t) $s2 .= " ...".$t." - ";
+								$cont = $s2;
+								
 								$all_results[] = array(
 									'link'	=> $page_link,
 									'menu_title'	=> $page['menu_title'],
 									'page_title'	=> $page['page_title'],
-									'section_id'	=> $section_content['section_id'],
+									'section_id'	=> "sec: ".$section_content['section_id'],
 									'content'		=> $cont
 								);
 							}
@@ -186,8 +216,7 @@ if (isset($_POST['job'])) {
 					
 					/**
 					 *	News section
-					 *
-					 /
+					 */
 					case 'news':
 						$section_content = array();
 						$database->execute_query(
@@ -202,27 +231,46 @@ if (isset($_POST['job'])) {
 						
 							/**
 							 *	Content_short or content_long?
-							 * /
-							$text_ref = ( false !== stripos( $result['content_short'], $search_item ) )
-								? $result['content_short']
-								: $result['content_long']
-								;
+							 */
+							$text_ref = $result['content_long'];
 							
-							$num_of_hits += substr_count($text_ref, $search_item);
+							processDroplets( $text_ref );
 							
-							$cont = preg_replace("/".$search_item."/i", $search_item_hilite, $text_ref);
-
-							$all_results[] = array(
-								'link'	=> $page_link,
-								'menu_title'	=> $page['menu_title'],
-								'page_title'	=> $page['page_title'],
-								'section_id'	=> $current_section['section_id'],
-								'content'		=> $cont
-							);
+							/**
+							 *	Try to find something!
+							 */
+							$temp_list_result = array();
+	
+							if( preg_match_all('/('.$search_item.')/Ui', $text_ref, $temp_list_result, PREG_SET_ORDER ))
+							{
+								// found
+								$num_of_hits += count($temp_list_result); // substr_count($section_content['content'], $search_item);
+								
+								$cont = preg_replace_callback(
+									'/(<img.*src=.*'.$search_item.'[^>]*\/>)|('.$search_item.')/is',
+										function ($treffer){
+											global $MOD_JASM;
+											global $search_item;
+											// echo LEPTON_tools::display( $treffer, "code", "ui message");
+											return $treffer[1] == ""
+												? sprintf( $MOD_JASM['search_item_hilite'], $treffer[0])
+												: $treffer[0].sprintf($MOD_JASM['found_inside_filename'], sprintf( $MOD_JASM['search_item_hilite'], $search_item ) )
+												;
+										},
+									$text_ref
+								);
+							
+								$all_results[] = array(
+									'link'	=> $page_link,
+									'menu_title'	=> $page['menu_title'],
+									'page_title'	=> $page['page_title'],
+									'section_id'	=> $current_section['section_id'],
+									'content'		=> $cont
+								);
+							}
 						}
-						#$num_of_hits++;
 						break;
-						*/
+						
 					default:
 						// nothing
 						

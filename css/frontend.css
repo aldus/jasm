@@ -52,3 +52,9 @@ span.jasm_search_item {
 	text-decoration:none;
 }
 
+.jasm_inside_filename {
+	color: #DDDDDD;
+	font-style: italic;
+	padding-left:3px;
+	margin-right: 10px;
+}
